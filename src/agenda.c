@@ -94,13 +94,66 @@ void imprimir_agenda(Agenda agenda){
  * Función que sirve para cargar contactos escritos en un archivo a la agenda
  */
 void cargar_contactos(char *filename, Agenda *agenda){
+    FILE *archivo = fopen(filename, "r");
+    
+    if(archivo == NULL){
+        printf("\n Error: No se pudo abrir el archivo '%s'\n", filename);
+        return;
 
 }
 
+    if(fscanf(archivo, "%d\n", &agenda->num_contactos) != 1){
+        printf("\n Error al leer el archivo.\n");
+        fclose(archivo);
+        return;
+    }
+    
+    if(agenda->num_contactos > MAX_CONTACTOS){
+        printf("\n[!] El archivo contiene mas contactos que el maximo permitido.\n");
+        agenda->num_contactos = MAX_CONTACTOS;
+    }
+    
+    
+    for(int i = 0; i < agenda->num_contactos; i++){
+        fscanf(archivo, "%s\n", agenda->contactos[i].nombre);
+        fscanf(archivo, "%s\n", agenda->contactos[i].apellido);
+        fscanf(archivo, "%d\n", (int*)&agenda->contactos[i].mes);
+        fscanf(archivo, "%s\n", agenda->contactos[i].dia_nac);
+        fscanf(archivo, "%s\n", agenda->contactos[i].num_tel);
+        fscanf(archivo, "%d\n", (int*)&agenda->contactos[i].TipoTelefono);
+    }
+    
+    fclose(archivo);
+    printf("\n[+] %d contactos cargados exitosamente desde '%s'\n", 
+           agenda->num_contactos, filename);
 
 /**
  * Función que sirve para guardar todos los contactos de la agenda en un archivo
  */
 void guardar_contactos(char *filename, Agenda agenda){
+    FILE *archivo = fopen(filename, "w");
+    
+    if(archivo == NULL){
+        printf("\n[!] Error: No se pudo crear el archivo '%s'\n", filename);
+        return;
+    }
+    
+ 
+    fprintf(archivo, "%d\n", agenda.num_contactos);
+    
+    
+    for(int i = 0; i < agenda.num_contactos; i++){
+        fprintf(archivo, "%s\n", agenda.contactos[i].nombre);
+        fprintf(archivo, "%s\n", agenda.contactos[i].apellido);
+        fprintf(archivo, "%d\n", agenda.contactos[i].mes);
+        fprintf(archivo, "%s\n", agenda.contactos[i].dia_nac);
+        fprintf(archivo, "%s\n", agenda.contactos[i].num_tel);
+        fprintf(archivo, "%d\n", agenda.contactos[i].TipoTelefono);
+    }
+    
+    fclose(archivo);
+    printf("\n[+] %d contactos guardados exitosamente en '%s'\n", 
+           agenda.num_contactos, filename);
+}
 
 }
